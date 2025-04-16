@@ -32,11 +32,11 @@ jobs:
 
     - name: Run tests with coverage
       run: |
-        cd subscription_tracker
+        cd trackerapp
         coverage run --source=. -m pytest
         coverage report
       env:
-        DJANGO_SETTINGS_MODULE: subscription_tracker.settings
+        DJANGO_SETTINGS_MODULE: trackerapp.settings
         DATABASE_URL: postgres://postgres:postgres@localhost:5432/github_actions
         DB_USER: postgres
         DB_PASSWORD: postgres
