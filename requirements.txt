@@ -13,3 +13,6 @@ flake8
 djangorestframework
 markdown
 django-filter
+celery>=5.3.0
+redis>=5.0.0
+django-celery-beat>=2.5.0
