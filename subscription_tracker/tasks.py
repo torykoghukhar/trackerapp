@@ -4,10 +4,6 @@ from datetime import date, timedelta
 from .models import Subscription
 
 
-from datetime import date, timedelta
-from django.core.mail import send_mail
-from .models import Subscription
-
 @shared_task
 def send_billing_alerts():
     tomorrow = date.today() + timedelta(days=1)
