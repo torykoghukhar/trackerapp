@@ -14,7 +14,7 @@ def user():
 @pytest.fixture
 def client(user):
     client = APIClient()
-    client.login(username='testuser', password='testpass')
+    client.force_authenticate(user=user)
     return client
 
 
@@ -34,7 +34,7 @@ def test_get_list(client, subscription):
     url = reverse('subscription-list')
     response = client.get(url)
     assert response.status_code == 200
-    assert response.data[0]['name'] == 'Netflix'
+    assert response.data['results'][0]['name'] == 'Netflix'
 
 
 @pytest.mark.django_db

@@ -4,9 +4,10 @@ from .forms import NewUserForm
 from django.contrib.auth import login, authenticate, logout
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets
 from .models import Subscription
 from subscription_tracker.api.serializers import SubscriptionSerializer
+from rest_framework.permissions import IsAuthenticated
 
 
 def hello_message(request):
@@ -53,7 +54,7 @@ def logout_request(request):
 
 class SubscriptionViewSet(viewsets.ModelViewSet):
     serializer_class = SubscriptionSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         return Subscription.objects.filter(user=self.request.user)

@@ -4,6 +4,7 @@ from .models import Subscription
 from datetime import date
 from django.urls import reverse
 from django.contrib.messages import get_messages
+from rest_framework.test import APIClient
 
 
 @pytest.mark.django_db
@@ -35,7 +36,7 @@ def test_register_valid_data(client):
         'password1': 'Strongpass123',
         'password2': 'Strongpass123',
     })
-    assert response.status_code == 302  # Redirect to "hello"
+    assert response.status_code == 302
     assert User.objects.filter(username='newuser').exists()
 
     follow_response = client.get(reverse('hello'))
@@ -93,3 +94,43 @@ def test_logout(client, test_user):
     follow_response = client.get(reverse('hello'))
     messages = list(get_messages(follow_response.wsgi_request))
     assert any("You have successfully logged out." in str(m) for m in messages)
+
+
+@pytest.mark.django_db
+def test_api_access_requires_authentication():
+    client = APIClient()
+    url = reverse('subscription-list')
+    response = client.get(url)
+    assert response.status_code == 403 or response.status_code == 401
+
+
+@pytest.mark.django_db
+def test_api_create_subscription_authenticated(test_user):
+    client = APIClient()
+    client.login(username='testuser', password='password123')
+
+    url = reverse('subscription-list')
+    data = {
+        "name": "HBO Max",
+        "price": 12.99,
+        "frequency": "monthly",
+        "next_billing_date": "2025-07-01"
+    }
+
+    response = client.post(url, data, format='json')
+    assert response.status_code == 201
+    assert response.data['name'] == 'HBO Max'
+
+
+@pytest.mark.django_db
+def test_api_create_subscription_unauthenticated():
+    client = APIClient()
+    url = reverse('subscription-list')
+    data = {
+        "name": "HBO Max",
+        "price": 12.99,
+        "frequency": "monthly",
+        "next_billing_date": "2025-07-01"
+    }
+    response = client.post(url, data, format='json')
+    assert response.status_code in [401, 403]
