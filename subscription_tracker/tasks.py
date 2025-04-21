@@ -4,6 +4,10 @@ from datetime import date, timedelta
 from .models import Subscription
 
 
+from datetime import date, timedelta
+from django.core.mail import send_mail
+from .models import Subscription
+
 @shared_task
 def send_billing_alerts():
     tomorrow = date.today() + timedelta(days=1)
@@ -14,10 +18,7 @@ def send_billing_alerts():
         if user_email:
             send_mail(
                 subject='Subscription payment reminder',
-                message=f'Hello! We would like to remind you that tomorrow ({
-                    sub.next_billing_date}) there will be a charge for the subscription: {
-                    sub.name} ({
-                    sub.price}$)',
+                message=f'Hello! We would like to remind you that tomorrow ({sub.next_billing_date}) there will be a charge for the subscription: {sub.name} ({sub.price}$)',
                 from_email=None,
                 recipient_list=[user_email],
                 fail_silently=False,
