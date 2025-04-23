@@ -8,6 +8,9 @@ from rest_framework import viewsets
 from .models import Subscription
 from subscription_tracker.api.serializers import SubscriptionSerializer
 from rest_framework.permissions import IsAuthenticated
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from decimal import Decimal
 
 
 def hello_message(request):
@@ -61,3 +64,26 @@ class SubscriptionViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+
+@login_required
+def monthly_expenses(request):
+    user = request.user
+    subscriptions = Subscription.objects.filter(user=user)
+
+    monthly_total = Decimal('0.00')
+
+    for sub in subscriptions:
+        if sub.frequency == 'monthly':
+            monthly_total += sub.price
+        elif sub.frequency == 'yearly':
+            monthly_total += sub.price / Decimal('12')
+        elif sub.frequency == 'weekly':
+            monthly_total += sub.price * Decimal('4.33')
+        elif sub.frequency == 'daily':
+            monthly_total += sub.price * Decimal('30')
+
+    return JsonResponse({
+        'monthly_expense': round(monthly_total, 2),
+        'currency': 'USD'
+    })
