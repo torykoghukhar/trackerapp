@@ -10,7 +10,6 @@ The **Subscription Tracker** is a web application designed to help users manage 
 - **Add Subscriptions**: Users can add subscriptions (e.g., streaming services, software, utility services) with details like price, renewal date, and payment method.
 - **Subscription Reminders**: The app sends notifications before the renewal date of subscriptions.
 - **Dashboard**: A user-friendly dashboard to display active subscriptions, renewal dates, and total costs.
-- **Subscription History**: Keep track of past subscriptions and their details.
 - **Task Scheduling**: Uses Celery to send notifications asynchronously at scheduled times.
 
 ## Technologies Used
